@@ -1,9 +1,10 @@
 package com.infosupport.machinelearning.modelmanagement.storage;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -18,13 +19,13 @@ public class ModelDataRepositoryTests {
     private String modelStoragePath;
     private ModelDataRepository modelDataRepository;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         modelStoragePath = "test_models";
         modelDataRepository = new ModelDataRepositoryImpl(modelStoragePath);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         FileUtils.deleteDirectory(new File(modelStoragePath));
     }

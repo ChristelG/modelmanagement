@@ -3,29 +3,28 @@ package com.infosupport.machinelearning.modelmanagement.api;
 import com.infosupport.machinelearning.modelmanagement.storage.ModelMetadata;
 import com.infosupport.machinelearning.modelmanagement.storage.ModelStorageService;
 import org.jetbrains.annotations.NotNull;
-import org.junit.After;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Collections;
 
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ModelsControllerIT {
+
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -35,7 +34,9 @@ public class ModelsControllerIT {
     @Value("${modelmanagement.storage.rootpath}")
     private String modelRepositoryPath;
 
-    @After
+
+
+    @AfterEach
     public void tearDown() throws Exception {
         Paths.get(modelRepositoryPath).toFile().delete();
     }

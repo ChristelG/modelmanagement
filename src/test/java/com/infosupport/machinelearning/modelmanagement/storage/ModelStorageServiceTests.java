@@ -1,8 +1,9 @@
 package com.infosupport.machinelearning.modelmanagement.storage;
 
-import org.junit.Before;
+
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
@@ -12,6 +13,7 @@ import java.util.Date;
 
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ModelStorageServiceTests {
     private ModelDataRepository modelDataRepository;
@@ -21,7 +23,7 @@ public class ModelStorageServiceTests {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         modelMetadataRepository = Mockito.mock(ModelMetadataRepository.class);
         modelDataRepository = Mockito.mock(ModelDataRepository.class);
@@ -59,8 +61,7 @@ public class ModelStorageServiceTests {
 
     @Test
     public void findModelByNameAndVersionForNonExistingModelThrowsException() throws Exception {
-        expectedException.expect(ModelNotFoundException.class);
-        modelStorageService.findModelByNameAndVersion("test-model", 2);
+        assertThrows(ModelNotFoundException.class, () -> modelStorageService.findModelByNameAndVersion("test-model", 2));
     }
 
     @Test
