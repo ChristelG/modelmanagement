@@ -11,8 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.util.StreamUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -58,5 +61,44 @@ public class ModelsControllerTests {
                 .when(modelStorageService).deleteModel("test-model", 2);
 
         mvc.perform(delete("/models/test-model/2")).andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    public void getModelExistingReturnsModel() throws Exception {
+        ModelMetadata testModelMetadata = new ModelMetadata("test-model", 1, new Date());
+        InputStream testModelStream = new ByteArrayInputStream("hello-world".getBytes());
+
+        given(modelStorageService.findModelByNameAndVersion("test-model", 1))
+                .willReturn(new ModelData(testModelMetadata, testModelStream));
+
+        mvc.perform(get("/models/test-model/1")).andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_OCTET_STREAM));
+        verify(modelStorageService, times(1)).findModelByNameAndVersion("test-model", 1);
+        verifyNoMoreInteractions(modelStorageService);
+    }
+
+    @Test
+    public void getModelNotExistingReturns404() throws Exception {
+        doThrow(new ModelNotFoundException("test-model", 2))
+                .when(modelStorageService).findModelByNameAndVersion("test-model", 2);
+
+        mvc.perform(get("/models/test-model/2")).andExpect(status().isNotFound());
+        verify(modelStorageService, times(1)).findModelByNameAndVersion("test-model", 2);
+        verifyNoMoreInteractions(modelStorageService);
+    }
+
+    @Test
+    public void postModelReturns202() throws Exception{
+        ModelMetadata testModelMetadata = new ModelMetadata("test-model", 1, new Date());
+        InputStream testModelStream = new ByteArrayInputStream("hello-world".getBytes());
+
+        given(modelStorageService.saveModel("test-model", testModelStream))
+                .willReturn(testModelMetadata);
+
+        mvc.perform(post("models/test-model")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .content(StreamUtils.copyToByteArray(testModelStream))
+                .accept(MediaType.APPLICATION_OCTET_STREAM))
+                .andExpect(status().isAccepted());
     }
 }

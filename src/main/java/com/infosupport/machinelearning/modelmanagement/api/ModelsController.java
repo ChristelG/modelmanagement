@@ -9,7 +9,9 @@ import com.infosupport.machinelearning.modelmanagement.storage.RegExMatcher;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -96,7 +98,9 @@ public class ModelsController {
     public ResponseEntity<Object> downloadModel(@PathVariable("name") String name, @PathVariable("version") int version) {
         try {
             ModelData responseData = modelStorageService.findModelByNameAndVersion(name, version);
-            return ResponseEntity.ok(new InputStreamResource(responseData.getStream()));
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            return new ResponseEntity<>(new InputStreamResource(responseData.getStream()), headers, HttpStatus.OK);
         } catch (ModelNotFoundException ex) {
             return genericApiError(404, messages.get("errors.model_not_found"));
         }
