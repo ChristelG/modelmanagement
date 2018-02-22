@@ -45,10 +45,9 @@ public class ModelsControllerIT {
     public void shouldUploadFileSuccesfully() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/octet-stream");
+        HttpEntity entity = new HttpEntity("test-model", headers);
 
-        HttpEntity entity = new HttpEntity("NN", headers);
-
-        ResponseEntity<String> response = restTemplate.exchange("/models/NN", HttpMethod.POST, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange("/models/test-model", HttpMethod.POST, entity, String.class);
         assertThat(response.getStatusCode(), equalTo(HttpStatus.ACCEPTED));
     }
 

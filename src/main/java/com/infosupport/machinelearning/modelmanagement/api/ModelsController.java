@@ -5,7 +5,7 @@ import com.infosupport.machinelearning.modelmanagement.Messages;
 import com.infosupport.machinelearning.modelmanagement.storage.ModelData;
 import com.infosupport.machinelearning.modelmanagement.storage.ModelNotFoundException;
 import com.infosupport.machinelearning.modelmanagement.storage.ModelStorageService;
-import com.infosupport.machinelearning.modelmanagement.storage.RegExMatcher;
+import com.infosupport.machinelearning.modelmanagement.storage.validityChecker;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -61,19 +61,14 @@ public class ModelsController {
     })
     public ResponseEntity<Object> uploadModel(@PathVariable String name,
                                               @ApiParam(value = "file", required = true) InputStream entity) {
-
-        RegExMatcher m = new RegExMatcher();
-        if (m.isValidName(name)) {
-            try {
+        try {
+            validityChecker m = new validityChecker();
+            if (m.isValidInput(name, entity)) {
                 modelStorageService.saveModel(name, entity);
-            } catch (IOException ex) {
-                return genericApiError(500, messages.get("errors.internal_error"));
             }
-        } else {
-            return genericApiError(500, messages.get("errors.invalid_name"));
+        } catch (IOException ex) {
+            return genericApiError(500, messages.get("errors.internal_error"));
         }
-
-
         return ResponseEntity.accepted().build();
     }
 

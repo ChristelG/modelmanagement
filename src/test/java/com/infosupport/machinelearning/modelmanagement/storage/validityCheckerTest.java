@@ -7,13 +7,13 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class RegExMatcherTest {
+public class validityCheckerTest {
 
-    private RegExMatcher m;
+    private validityChecker m;
 
     @BeforeEach
     public void setup() {
-        m = new RegExMatcher();
+        m = new validityChecker();
     }
 
     @Test

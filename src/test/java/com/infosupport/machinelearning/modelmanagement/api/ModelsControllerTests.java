@@ -12,10 +12,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
+
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.util.StreamUtils;
+
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -92,13 +92,15 @@ public class ModelsControllerTests {
         ModelMetadata testModelMetadata = new ModelMetadata("test-model", 1, new Date());
         InputStream testModelStream = new ByteArrayInputStream("hello-world".getBytes());
 
-        given(modelStorageService.saveModel("test-model", testModelStream))
-                .willReturn(testModelMetadata);
+        when(modelStorageService.saveModel("test-model", testModelStream))
+                .thenReturn(testModelMetadata);
 
-        mvc.perform(post("models/test-model")
+        mvc.perform(post("/models/test-model")
+                .accept(MediaType.ALL_VALUE)
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .content(StreamUtils.copyToByteArray(testModelStream))
-                .accept(MediaType.APPLICATION_OCTET_STREAM))
+                .content("hello-world".getBytes()))
                 .andExpect(status().isAccepted());
+
+
     }
 }
